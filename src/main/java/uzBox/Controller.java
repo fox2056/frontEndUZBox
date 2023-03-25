@@ -57,7 +57,7 @@ public class Controller {
         window.setTitle("Ustawienia");
 
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("Ustawienia.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 500, 600);
+        Scene scene = new Scene(fxmlLoader.load());
 
         window.setScene(scene);
 
