@@ -13,6 +13,15 @@ public class User {
         return login;
     }
 
+    @Override
+    public String toString() {
+
+        return "{" +
+                "login:'" + login + '\'' +
+                ", haslo:'" + haslo + '\'' +
+                '}';
+    }
+
     public String getHaslo() {
         return haslo;
     }
