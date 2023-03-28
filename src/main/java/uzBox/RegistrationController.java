@@ -6,23 +6,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.io.OutputStream;
 
 
 public class RegistrationController {
-
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
 
     @FXML
     private TextField emailField;
@@ -39,17 +35,28 @@ public class RegistrationController {
     @FXML
     private Button registerButton;
 
+    void blad(String exc) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+
+        alert.setTitle("Błąd");
+        alert.setHeaderText("Nie można zarejestrować się");
+        alert.setContentText(exc);
+
+        alert.showAndWait();
+    }
+
+
     @FXML
     void loginFormsShow(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("loginForm.fxml"));
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
+        Parent root = FXMLLoader.load(getClass().getResource("loginForm.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
 
     @FXML
-    void registrate(ActionEvent event) {
+    void registrate() {
 
         User user = new User(nameField.getText(), passwordField.getText());
         System.out.println(user.getLogin() + " " + user.getHaslo());
@@ -74,16 +81,20 @@ public class RegistrationController {
 
             // Pobierz odpowiedź od backendu
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                System.out.println("Backend response: " + connection.getInputStream().toString());
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Registration");
+                alert.setHeaderText("Results:");
+                alert.setContentText("Backend response: " + connection.getInputStream().toString());
+                alert.showAndWait();
+
             } else {
-                System.out.println("Backend returned an error: " + connection.getResponseCode());
+                blad("Nie wiadomo");
             }
 
         } catch (ProtocolException e) {
             throw new RuntimeException(e);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
+            blad(e.getMessage());
             throw new RuntimeException(e);
         }
     }}
