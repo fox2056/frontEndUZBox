@@ -12,17 +12,12 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.io.OutputStream;
 
-
-public class RegistrationController {
-
-    @FXML
-    private TextField emailField;
-
+public class LoginController {
     @FXML
     private Button loginButton;
 
@@ -35,28 +30,27 @@ public class RegistrationController {
     @FXML
     private Button registerButton;
 
-    void blad(String exc) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-
-        alert.setTitle("Błąd");
-        alert.setHeaderText("Nie można zarejestrować się");
-        alert.setContentText(exc);
-
-        alert.showAndWait();
-    }
-
-
     @FXML
-    void loginFormsShow(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("loginForm.fxml"));
+    void appFormsShow(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("uzBox.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
 
+    void blad(String exc) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+
+        alert.setTitle("Błąd");
+        alert.setHeaderText("Nie można zalogować się");
+        alert.setContentText(exc);
+
+        alert.showAndWait();
+    }
+
     @FXML
-    void registrate(ActionEvent event) {
+    public void zalogujSie(ActionEvent event) throws IOException {
 
         User user = new User(nameField.getText(), passwordField.getText());
         System.out.println(user.getLogin() + " " + user.getHaslo());
@@ -67,7 +61,7 @@ public class RegistrationController {
                     user.getLogin(),
                     user.getHaslo());
             // Utwórz połączenie HTTP
-            URL url = new URL("http://localhost:5050/user/register/");
+            URL url = new URL("http://localhost:5050/user/login/");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
@@ -82,11 +76,11 @@ public class RegistrationController {
             // Pobierz odpowiedź od backendu
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Rejestracja");
+                alert.setTitle("Logowanie");
                 alert.setHeaderText("Rezultat:");
-                alert.setContentText("Zarejestrowałeś się");
+                alert.setContentText("Zalogowałeś się");
                 alert.showAndWait();
-                loginFormsShow(event);
+                appFormsShow(event);
 
             } else {
                 blad("Nie wiadomo");
@@ -98,4 +92,14 @@ public class RegistrationController {
             blad(e.getMessage());
             throw new RuntimeException(e);
         }
-    }}
+    }
+
+    @FXML
+    public void registrationFormsShow(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("registrationForm.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+}

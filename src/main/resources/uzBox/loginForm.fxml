@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uzBox.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uzBox.LoginController">
     <children>
         <Label layoutX="34.0" layoutY="42.0" text="Zaloguj się">
             <font>
@@ -17,7 +17,7 @@
         <Label layoutX="34.0" layoutY="132.0" text="Hasło" />
         <TextField fx:id="passwordField" layoutX="109.0" layoutY="128.0" />
         <Button fx:id="loginButton" layoutX="84.0" layoutY="176.0" mnemonicParsing="false" onAction="#zalogujSie" text="Wejść" />
-        <Button fx:id="registerButton1" layoutX="175.0" layoutY="176.0" mnemonicParsing="false" onAction="#registrationFormsShow" text="Zarejestruj się" />
+        <Button fx:id="registerButton" layoutX="175.0" layoutY="176.0" mnemonicParsing="false" onAction="#registrationFormsShow" text="Zarejestruj się" />
         <Label layoutX="146.0" layoutY="181.0" text="lub" />
     </children>
 </AnchorPane>
