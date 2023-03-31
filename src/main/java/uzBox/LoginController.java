@@ -11,8 +11,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.lang.Object;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -53,7 +53,6 @@ public class LoginController {
     public void zalogujSie(ActionEvent event) throws IOException {
 
         User user = new User(nameField.getText(), passwordField.getText());
-        System.out.println(user.getLogin() + " " + user.getHaslo());
 
         try {
             // Utwórz obiekt JSON z danymi
@@ -83,13 +82,27 @@ public class LoginController {
                 appFormsShow(event);
 
             } else {
-                blad("Nie wiadomo");
+                BufferedReader br = new BufferedReader(new InputStreamReader(
+                        (connection.getInputStream())));
+
+                String output;
+                StringBuilder response = new StringBuilder();
+
+                while ((output = br.readLine()) != null) {
+                    response.append(output);
+                }
+
+                connection.disconnect();
+
+                String responseBody = response.toString();
+
+                blad(responseBody);
             }
 
         } catch (ProtocolException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
-            blad(e.getMessage());
+            blad(" Wyjątek " + e.getMessage() +" \n ");
             throw new RuntimeException(e);
         }
     }

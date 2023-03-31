@@ -10,12 +10,16 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.io.OutputStream;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
 
 
 public class RegistrationController {
@@ -56,46 +60,45 @@ public class RegistrationController {
     }
 
     @FXML
-    void registrate(ActionEvent event) {
+    void registrate(ActionEvent event) throws IOException {
 
         User user = new User(nameField.getText(), passwordField.getText());
-        System.out.println(user.getLogin() + " " + user.getHaslo());
 
-        try {
-            // Utwórz obiekt JSON z danymi
-            String userJson = String.format("{\"login\": \"%s\", \"password\": \"%s\"}",
-                    user.getLogin(),
-                    user.getHaslo());
-            // Utwórz połączenie HTTP
-            URL url = new URL("http://localhost:5050/user/register/");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
 
-            // Wyślij dane JSON do backendu
-            OutputStream os = connection.getOutputStream();
-            os.write(userJson.getBytes());
-            os.flush();
-            os.close();
+        String url = "http://localhost:5050/user/register/";
+        String json = "{\"login\": \"" + user.getLogin() + "\", \"password\": \"" + user.getHaslo() + "\"}";
 
-            // Pobierz odpowiedź od backendu
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Rejestracja");
-                alert.setHeaderText("Rezultat:");
-                alert.setContentText("Zarejestrowałeś się");
-                alert.showAndWait();
-                loginFormsShow(event);
+        System.out.println(json);
 
-            } else {
-                blad("Nie wiadomo");
-            }
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(url);
 
-        } catch (ProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            blad(e.getMessage());
-            throw new RuntimeException(e);
+        // Ustaw nagłówek Content-Type na application/json
+        httpPost.setHeader("Content-Type", "application/json");
+
+        // Ustaw treść żądania
+        StringEntity entity = new StringEntity(json, ContentType.APPLICATION_JSON);
+        httpPost.setEntity(entity);
+
+        // Wyślij żądanie
+        CloseableHttpResponse response = client.execute(httpPost);
+
+        // Odczytaj odpowiedź
+        HttpEntity responseEntity = response.getEntity();
+        if (responseEntity != null) {
+            String responseBody = EntityUtils.toString(responseEntity);
+            System.out.println(responseBody);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Rejestracja");
+            alert.setHeaderText("Rezultat:");
+            alert.setContentText("Zarejestrowałeś się");
+            alert.showAndWait();
+            loginFormsShow(event);
         }
-    }}
+
+        // Zamknij połączenie
+        response.close();
+        client.close();
+
+    }
+}
