@@ -1,11 +1,8 @@
-module com.example.frontenduzbox {
+module frontEndUZBox.main {
     requires javafx.controls;
     requires javafx.fxml;
-
-    requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.bootstrapfx.core;
-    requires org.apache.httpcomponents.httpcore;
-    requires org.apache.httpcomponents.httpclient;
+    requires okhttp3;
+    requires com.fasterxml.jackson.databind;
 
     opens uzBox to javafx.fxml;
     exports uzBox;

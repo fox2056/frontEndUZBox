@@ -1,5 +1,9 @@
 package uzBox;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,37 +11,22 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import java.io.IOException;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import okhttp3.*;
 
+import java.io.IOException;
 
 
 public class RegistrationController {
 
-    @FXML
-    private TextField emailField;
-
-    @FXML
-    private Button loginButton;
+    private static final String URL = "http://localhost:5050/user/register/";
 
     @FXML
     private TextField nameField;
 
     @FXML
     private TextField passwordField;
-
-    @FXML
-    private Button registerButton;
 
     void blad(String exc) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -46,6 +35,14 @@ public class RegistrationController {
         alert.setHeaderText("Nie można zarejestrować się");
         alert.setContentText(exc);
 
+        alert.showAndWait();
+    }
+
+    void jestOk() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Rejestracja");
+        alert.setHeaderText("Rezultat:");
+        alert.setContentText("Zarejestrowałeś się");
         alert.showAndWait();
     }
 
@@ -63,42 +60,27 @@ public class RegistrationController {
     void registrate(ActionEvent event) throws IOException {
 
         User user = new User(nameField.getText(), passwordField.getText());
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create("{\n    \"login\": \""+user.getLogin()+"\",\n    \"password\": \""+user.getHaslo()+"\"\n}", mediaType);
+        Request request = new Request.Builder()
+                .url("http://localhost:5050/user/register/")
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+        Response response = client.newCall(request).execute();
 
-
-        String url = "http://localhost:5050/user/register/";
-        String json = "{\"login\": \"" + user.getLogin() + "\", \"password\": \"" + user.getHaslo() + "\"}";
-
-        System.out.println(json);
-
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(url);
-
-        // Ustaw nagłówek Content-Type na application/json
-        httpPost.setHeader("Content-Type", "application/json");
-
-        // Ustaw treść żądania
-        StringEntity entity = new StringEntity(json, ContentType.APPLICATION_JSON);
-        httpPost.setEntity(entity);
-
-        // Wyślij żądanie
-        CloseableHttpResponse response = client.execute(httpPost);
-
-        // Odczytaj odpowiedź
-        HttpEntity responseEntity = response.getEntity();
-        if (responseEntity != null) {
-            String responseBody = EntityUtils.toString(responseEntity);
-            System.out.println(responseBody);
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Rejestracja");
-            alert.setHeaderText("Rezultat:");
-            alert.setContentText("Zarejestrowałeś się");
-            alert.showAndWait();
+        if (response.code() == 200) {
+            jestOk();
             loginFormsShow(event);
-        }
-
-        // Zamknij połączenie
-        response.close();
-        client.close();
+        } else {
+            String message = response.body().string();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(message);
+            String err = jsonNode.get("error").asText();
+            blad(err);
+        };
 
     }
 }

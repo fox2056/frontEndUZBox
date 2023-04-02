@@ -1,5 +1,7 @@
 package uzBox;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,28 +9,28 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import okhttp3.*;
+// import okhttp3.OkHttpClient;
+
 
 import java.io.*;
-import java.lang.Object;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
-import java.net.URL;
 
 public class LoginController {
-    @FXML
-    private Button loginButton;
+    // private OkHttpClient client;
+
+    //public LoginController(OkHttpClient client) {
+    //    this.client = client;
+    // }
+
+    private static final String URL = "http://localhost:5050/user/login/";
 
     @FXML
     private TextField nameField;
 
     @FXML
     private TextField passwordField;
-
-    @FXML
-    private Button registerButton;
 
     @FXML
     void appFormsShow(ActionEvent event) throws IOException {
@@ -49,62 +51,39 @@ public class LoginController {
         alert.showAndWait();
     }
 
+    void jestOk() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Logowanie");
+        alert.setHeaderText("Rezultat:");
+        alert.setContentText("Zalogowałeś się");
+        alert.showAndWait();
+    }
+
     @FXML
     public void zalogujSie(ActionEvent event) throws IOException {
-
         User user = new User(nameField.getText(), passwordField.getText());
 
-        try {
-            // Utwórz obiekt JSON z danymi
-            String userJson = String.format("{\"login\": \"%s\", \"password\": \"%s\"}",
-                    user.getLogin(),
-                    user.getHaslo());
-            // Utwórz połączenie HTTP
-            URL url = new URL("http://localhost:5050/user/login/");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create("{\n    \"login\": \""+user.getLogin()+"\",\n    \"password\": \""+user.getHaslo()+"\"\n}", mediaType);
+        Request request = new Request.Builder()
+                .url("http://localhost:5050/user/login/")
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+        Response response = client.newCall(request).execute();
 
-            // Wyślij dane JSON do backendu
-            OutputStream os = connection.getOutputStream();
-            os.write(userJson.getBytes());
-            os.flush();
-            os.close();
-
-            // Pobierz odpowiedź od backendu
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Logowanie");
-                alert.setHeaderText("Rezultat:");
-                alert.setContentText("Zalogowałeś się");
-                alert.showAndWait();
-                appFormsShow(event);
-
-            } else {
-                BufferedReader br = new BufferedReader(new InputStreamReader(
-                        (connection.getInputStream())));
-
-                String output;
-                StringBuilder response = new StringBuilder();
-
-                while ((output = br.readLine()) != null) {
-                    response.append(output);
-                }
-
-                connection.disconnect();
-
-                String responseBody = response.toString();
-
-                blad(responseBody);
-            }
-
-        } catch (ProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            blad(" Wyjątek " + e.getMessage() +" \n ");
-            throw new RuntimeException(e);
-        }
+        if (response.code() == 200) {
+            jestOk();
+            appFormsShow(event);
+        } else {
+            String message = response.body().string();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(message);
+            String err = jsonNode.get("error").asText();
+            blad(err);
+        };
     }
 
     @FXML
