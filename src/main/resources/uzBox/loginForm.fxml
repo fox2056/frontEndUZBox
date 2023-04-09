@@ -2,12 +2,12 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uzBox.LoginController">
-    <children>
         <Label layoutX="34.0" layoutY="42.0" text="Zaloguj się">
             <font>
                 <Font name="System Bold" size="21.0" />
@@ -15,9 +15,8 @@
         <Label layoutX="34.0" layoutY="99.0" text="Login" />
         <TextField fx:id="nameField" layoutX="109.0" layoutY="95.0" />
         <Label layoutX="34.0" layoutY="132.0" text="Hasło" />
-        <TextField fx:id="passwordField" layoutX="109.0" layoutY="128.0" />
         <Button fx:id="loginButton" layoutX="84.0" layoutY="176.0" mnemonicParsing="false" onAction="#zalogujSie" text="Wejść" />
         <Button fx:id="registerButton" layoutX="175.0" layoutY="176.0" mnemonicParsing="false" onAction="#registrationFormsShow" text="Zarejestruj się" />
         <Label layoutX="146.0" layoutY="181.0" text="lub" />
-    </children>
+      <PasswordField fx:id="passwordField" layoutX="110.0" layoutY="128.0" prefHeight="26.0" prefWidth="160.0" />
 </AnchorPane>

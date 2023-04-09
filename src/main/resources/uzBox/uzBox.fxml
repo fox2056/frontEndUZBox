@@ -80,16 +80,17 @@
    <center>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <TableView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tbData" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
               <columns>
-                <TableColumn prefWidth="160.0" text="Nazwa" />
-                <TableColumn prefWidth="100.0" text="Rozszerzenie" />
-                <TableColumn prefWidth="100.0" text="Data utworzenia" />
+                <TableColumn fx:id="name" prefWidth="160.0" text="Nazwa" />
+                <TableColumn fx:id="systemName" prefWidth="100.0" text="Rozszerzenie" />
+                <TableColumn fx:id="systemPath" prefWidth="100.0" text="Gdzie" />
+                  <TableColumn fx:id="owner" prefWidth="100.0" text="Właściciel" />
               </columns>
             </TableView>
             <HBox spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" text="Dodaj" />
+                  <Button fx:id="addButton" mnemonicParsing="false" text="Dodaj" />
                   <Button mnemonicParsing="false" text="Udostępnij" />
                   <Button mnemonicParsing="false" text="Usuń" />
                </children>
