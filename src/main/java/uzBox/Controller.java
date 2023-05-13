@@ -6,9 +6,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -36,21 +37,63 @@ public class Controller implements Initializable {
     @FXML
     private TableColumn<FileModel, String> systemPath;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        name.setCellValueFactory(new PropertyValueFactory<>("Name"));
-        owner.setCellValueFactory(new PropertyValueFactory<>("Owner"));
-        systemName.setCellValueFactory(new PropertyValueFactory<>("SystemName"));
-        systemPath.setCellValueFactory(new PropertyValueFactory<>("SystemPath"));
-        //add your data to the table here.
-        tbData.setItems(fileModels);
-    }
+    @FXML
+    private Label nazwaUzytkownika;
+
+    @FXML
+    private TreeView<String> folderTree;
 
     private ObservableList<FileModel> fileModels = FXCollections.observableArrayList(
             new FileModel("plik1", "User:/Desktop/Folder/", ".png", "Oleksii"),
             new FileModel("plik2", "User:/System/", ".exe", "Krystian")
-            );
+    );
 
+    private ObservableList<DirectoryModel> folderList = FXCollections.observableArrayList(
+            new DirectoryModel("folder1", "folderGlowny"),
+            new DirectoryModel("folder2", "folderGlowny"),
+            new DirectoryModel("folder3", "folder1")
+    );
+
+    TreeItem<String> rootNode =
+            new TreeItem<String>("MyCompany Human Resources");
+
+
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+        // sciągemy z Sesji nazwe użytkownika
+        nazwaUzytkownika.setText(UserSession.getInstance().getUserName());
+
+        // uzupełniamy TreeView
+        rootNode.setExpanded(true);
+        for (DirectoryModel folder : folderList) {
+            TreeItem<String> empLeaf = new TreeItem<String>(folder.getNazwa());
+            boolean found = false;
+            for (TreeItem<String> depNode : rootNode.getChildren()) {
+                if (depNode.getValue().contentEquals(folder.getFolderRodzic())){
+                    depNode.getChildren().add(empLeaf);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                TreeItem<String> depNode = new TreeItem<String>(
+                        folder.getFolderRodzic()
+                );
+                rootNode.getChildren().add(depNode);
+                depNode.getChildren().add(empLeaf);
+            }
+        }
+
+        folderTree.setRoot(rootNode);
+        // Uzupełniamy tabele plików
+        name.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        owner.setCellValueFactory(new PropertyValueFactory<>("Owner"));
+        systemName.setCellValueFactory(new PropertyValueFactory<>("SystemName"));
+        systemPath.setCellValueFactory(new PropertyValueFactory<>("SystemPath"));
+        tbData.setItems(fileModels);
+    }
 
     @FXML
     public void ustawieniaWindow(ActionEvent event) throws IOException {
@@ -62,4 +105,16 @@ public class Controller implements Initializable {
         window.setScene(scene);
         window.showAndWait();
     }
+
+    @FXML
+    public void loginOut(ActionEvent event) throws IOException {
+        UserSession.getInstance().cleanUserSession();
+        Parent root = FXMLLoader.load(getClass().getResource("loginForm.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
 }

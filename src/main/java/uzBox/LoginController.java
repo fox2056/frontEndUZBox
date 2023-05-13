@@ -49,6 +49,11 @@ public class LoginController {
 
         if (response.code() == 200) {
             alertbox.alertOk("Logowanie", "Rezultat:", "Zalogowałeś się");
+            String message = response.body().string();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(message);
+            String sessionId = jsonNode.get("id").asText();
+            UserSession.getInstace(nameField.getText(), sessionId);
             appFormsShow(event);
         } else {
             String message = response.body().string();
