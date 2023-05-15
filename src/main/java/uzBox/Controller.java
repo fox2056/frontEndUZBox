@@ -116,5 +116,14 @@ public class Controller implements Initializable {
         stage.show();
     }
 
+    @FXML
+    void addFolder(ActionEvent event) {
+
+    }
+
+    @FXML
+    void deleteFolder(ActionEvent event) {
+
+    }
 
 }
