@@ -1,5 +1,6 @@
 package uzBox;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,6 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import uzBox.user.UserSession;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -43,6 +46,9 @@ public class Controller implements Initializable {
     @FXML
     private TreeView<String> folderTree;
 
+    @FXML
+    private UserSession userSession;
+
     private ObservableList<FileModel> fileModels = FXCollections.observableArrayList(
             new FileModel("plik1", "User:/Desktop/Folder/", ".png", "Oleksii"),
             new FileModel("plik2", "User:/System/", ".exe", "Krystian")
@@ -58,12 +64,18 @@ public class Controller implements Initializable {
             new TreeItem<String>("MyCompany Human Resources");
 
 
+    public void setUserSession(UserSession session){
+        userSession = session;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         // sciągemy z Sesji nazwe użytkownika
-        nazwaUzytkownika.setText(UserSession.getInstance().getUserName());
+        Platform.runLater(() -> {
+            nazwaUzytkownika.setText(this.userSession.getUserName());
+                });
+
 
         // uzupełniamy TreeView
         rootNode.setExpanded(true);
@@ -108,7 +120,8 @@ public class Controller implements Initializable {
 
     @FXML
     public void loginOut(ActionEvent event) throws IOException {
-        UserSession.getInstance().cleanUserSession();
+        //TODO: przeslanie requestu logout do serwera
+        userSession.cleanUserSession();
         Parent root = FXMLLoader.load(getClass().getResource("loginForm.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);

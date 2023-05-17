@@ -7,18 +7,18 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uzBox.RegistrationController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uzBox.user.RegistrationService">
    <children>
       <Label layoutX="34.0" layoutY="42.0" text="Zarejestruj się">
          <font>
             <Font name="System Bold" size="21.0" />
          </font></Label>
       <Label layoutX="34.0" layoutY="99.0" text="Login" />
-      <TextField fx:id="nameField" layoutX="109.0" layoutY="95.0" />
+      <TextField fx:id="loginField" layoutX="109.0" layoutY="95.0" />
       <Label layoutX="34.0" layoutY="141.0" text="Email" />
       <TextField fx:id="emailField" layoutX="109.0" layoutY="137.0" />
       <Label layoutX="34.0" layoutY="182.0" text="Hasło" />
-      <Button fx:id="registerButton" layoutX="43.0" layoutY="241.0" mnemonicParsing="false" onAction="#zarejestrujSie" text="Zarejestruj się" />
+      <Button fx:id="registerButton" layoutX="43.0" layoutY="241.0" mnemonicParsing="false" onAction="#registerUser" text="Zarejestruj się" />
       <Button fx:id="loginButton" layoutX="175.0" layoutY="241.0" mnemonicParsing="false" onAction="#loginFormsShow" text="Zaloguj się" />
       <Label layoutX="146.0" layoutY="246.0" text="lub" />
       <PasswordField fx:id="passwordField" layoutX="109.0" layoutY="178.0" prefHeight="26.0" prefWidth="160.0" />

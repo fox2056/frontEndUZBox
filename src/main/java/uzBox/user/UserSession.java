@@ -1,4 +1,4 @@
-package uzBox;
+package uzBox.user;
 
 public final class UserSession {
 

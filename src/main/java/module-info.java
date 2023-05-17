@@ -6,4 +6,6 @@ module frontEndUZBox.main {
 
     opens uzBox to javafx.fxml;
     exports uzBox;
+    exports uzBox.user;
+    opens uzBox.user to javafx.fxml;
 }
