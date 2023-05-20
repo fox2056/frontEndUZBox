@@ -14,7 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import uzBox.user.UserSession;
+import uzBox.user.session.authorization.SessionController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -47,7 +47,7 @@ public class Controller implements Initializable {
     private TreeView<String> folderTree;
 
     @FXML
-    private UserSession userSession;
+    private SessionController sessionController;
 
     private ObservableList<FileModel> fileModels = FXCollections.observableArrayList(
             new FileModel("plik1", "User:/Desktop/Folder/", ".png", "Oleksii"),
@@ -64,8 +64,8 @@ public class Controller implements Initializable {
             new TreeItem<String>("MyCompany Human Resources");
 
 
-    public void setUserSession(UserSession session){
-        userSession = session;
+    public void setUserSession(SessionController session){
+        sessionController = session;
     }
 
     @Override
@@ -73,8 +73,9 @@ public class Controller implements Initializable {
 
         // sciągemy z Sesji nazwe użytkownika
         Platform.runLater(() -> {
-            nazwaUzytkownika.setText(this.userSession.getUserName());
-                });
+            nazwaUzytkownika.setText(this.sessionController.getUsernane());
+            System.out.println(this.sessionController);
+        });
 
 
         // uzupełniamy TreeView
@@ -121,8 +122,18 @@ public class Controller implements Initializable {
     @FXML
     public void loginOut(ActionEvent event) throws IOException {
         //TODO: przeslanie requestu logout do serwera
-        userSession.cleanUserSession();
-        Parent root = FXMLLoader.load(getClass().getResource("loginForm.fxml"));
+        AlertBox result = new AlertBox();
+        String response = sessionController.logoutSession();
+        if(response == "200"){
+            result.alertOk("Wylogowanie użytkownia", "Wylogowano użytkowania", "OK");
+        }
+        else{
+            result.alertErr("Wylogowanie użytkownika", "Błąd podczas wylogowania", response);
+            return;
+        }
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/uzBox/loginForm.fxml"));
+        Parent root = loader.load();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);

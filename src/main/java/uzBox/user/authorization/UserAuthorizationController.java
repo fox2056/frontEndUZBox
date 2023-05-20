@@ -1,7 +1,7 @@
 package uzBox.user.authorization;
 
 import uzBox.user.User;
-import uzBox.user.UserSession;
+import uzBox.user.session.Session;
 
 public class UserAuthorizationController {
     private final User user;
@@ -17,30 +17,27 @@ public class UserAuthorizationController {
 
     public String registerUser(){
         userRequestConstructor.constructUserRequest("user/register/");
-        userRequestHandler.sendUserRequest();
-        if(userRequestHandler.isServerAlive()){
-            if(userRequestHandler.isUserRequestSuccessful()){
-                return "200";
-            }
-            return userRequestHandler.userRequestErrorMessage();
-        }
-        return "Cannot connect to server";
+        return getResponse();
     }
 
     public String loginUser(){
         userRequestConstructor.constructUserRequest("user/login/");
+        return getResponse();
+    }
+
+    private String getResponse() {
         userRequestHandler.sendUserRequest();
         if(userRequestHandler.isServerAlive()){
         if(userRequestHandler.isUserRequestSuccessful()){
             return "200";
         }
-        return userRequestHandler.userRequestErrorMessage();
+            return userRequestHandler.userRequestErrorMessage();
         }
         return "Cannot connect to server";
     }
 
-    public UserSession retrieveSessionUUID(){
+    public Session retrieveUserSession(){
         String sessionId = userRequestHandler.retrieveSessionUUID();
-        return UserSession.getInstace(user.getLogin(), sessionId);
+        return Session.getInstace(user.getLogin(), sessionId);
     }
 }

@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import uzBox.AlertBox;
 import uzBox.Controller;
 import uzBox.user.authorization.UserAuthorizationController;
+import uzBox.user.session.authorization.SessionController;
 
 import java.io.IOException;
 
@@ -25,12 +26,12 @@ public class LoginService {
 
 
     @FXML
-    public void appFormsShow(ActionEvent event, UserSession userSession) throws IOException {
+    public void appFormsShow(ActionEvent event, SessionController sessionController) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/uzBox/uzBox.fxml"));
         Parent root = loader.load();
         Controller controller = loader.getController();
-        controller.setUserSession(userSession);
+        controller.setUserSession(sessionController);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -45,8 +46,8 @@ public class LoginService {
         String response = userAuthorizationController.loginUser();
         if (response == "200") {
             alertbox.alertOk("Logowanie", "Rezultat:", "Zalogowałeś się");
-            UserSession userSession = userAuthorizationController.retrieveSessionUUID();
-            appFormsShow(event, userSession);
+            SessionController sessionController = new SessionController(userAuthorizationController.retrieveUserSession());
+            appFormsShow(event, sessionController);
         } else {
             alertbox.alertErr("Błąd", "Nie można zalogować się", response);
         }

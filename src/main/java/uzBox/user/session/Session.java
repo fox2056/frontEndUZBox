@@ -1,25 +1,25 @@
-package uzBox.user;
+package uzBox.user.session;
 
-public final class UserSession {
+public final class Session {
 
-    private static UserSession instance;
+    private static Session instance;
 
     private String userName;
     private String sessionUUID;
 
-    private UserSession(String userName, String sessionUUID) {
+    private Session(String userName, String sessionUUID) {
         this.userName = userName;
         this.sessionUUID = sessionUUID;
     }
 
-    public static UserSession getInstace(String userName, String sessionUUID) {
+    public static Session getInstace(String userName, String sessionUUID) {
         if(instance == null) {
-            instance = new UserSession(userName, sessionUUID);
+            instance = new Session(userName, sessionUUID);
         }
         return instance;
     }
 
-    public static UserSession getInstance() {
+    public static Session getInstance() {
         return instance;
     }
 
