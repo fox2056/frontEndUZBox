@@ -12,4 +12,8 @@ module frontEndUZBox.main {
     opens uzBox.user.session to javafx.fxml;
     exports uzBox.user.session.authorization;
     opens uzBox.user.session.authorization to javafx.fxml;
+    exports uzBox.popups;
+    opens uzBox.popups to javafx.fxml;
+    exports uzBox.filesystem.file;
+    opens uzBox.filesystem.file to javafx.fxml;
 }

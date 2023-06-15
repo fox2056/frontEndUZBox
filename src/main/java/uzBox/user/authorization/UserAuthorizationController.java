@@ -1,5 +1,6 @@
 package uzBox.user.authorization;
 
+import uzBox.json.JsonErrorMessageHandler;
 import uzBox.user.User;
 import uzBox.user.session.Session;
 
@@ -7,12 +8,14 @@ public class UserAuthorizationController {
     private final User user;
     private final UserRequestConstructor userRequestConstructor;
     private final UserRequestHandler userRequestHandler;
+    private final JsonErrorMessageHandler errorMessageHandler;
 
 
     public UserAuthorizationController(User user) {
         this.user = user;
         this.userRequestConstructor = new UserRequestConstructor(this.user);
         this.userRequestHandler = new UserRequestHandler(userRequestConstructor);
+        this.errorMessageHandler = new JsonErrorMessageHandler();
     }
 
     public String registerUser(){

@@ -9,7 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import uzBox.AlertBox;
+import uzBox.popups.AlertBox;
 import uzBox.user.authorization.UserAuthorizationController;
 
 import java.io.IOException;

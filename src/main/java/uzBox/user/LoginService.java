@@ -9,8 +9,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import uzBox.AlertBox;
 import uzBox.Controller;
+import uzBox.filesystem.directory.DirectoryController;
+import uzBox.popups.AlertBox;
 import uzBox.user.authorization.UserAuthorizationController;
 import uzBox.user.session.authorization.SessionController;
 
@@ -32,6 +33,7 @@ public class LoginService {
         Parent root = loader.load();
         Controller controller = loader.getController();
         controller.setUserSession(sessionController);
+        controller.setDirectoryController(new DirectoryController(sessionController.getSessionUUID()));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);

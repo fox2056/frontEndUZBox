@@ -1,4 +1,4 @@
-package uzBox;
+package uzBox.filesystem.file;
 
 import javafx.beans.property.SimpleStringProperty;
 
